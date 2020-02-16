@@ -3,11 +3,12 @@ import { IGame, EDirections, ESnakeEvents } from './interfaces';
 import debug from './debug';
 import { Point } from './point';
 
-const NUMBER_OF_PIECES_TO_START = 4;
+const NUMBER_OF_PIECES_TO_START = 12;
 
 export class SnakeEvent extends Event {
     special: boolean = false;
     isBorderCollision: boolean = false;
+    gameOver: boolean = false;
 
     constructor (type: string, special: boolean = false) {
         super(type);
@@ -98,6 +99,17 @@ export class Snake {
             isCollision = true;
         } else if (this.firstPiece.y + this.firstPiece.height > this._game.area.height) {
             isCollision = true;
+        }
+
+        // Detect itself collision
+        for (let i = 2; i< this.pieces.length; i++){
+            const piece = this.pieces[i];
+            const collision = this.firstPiece.detectCollision(piece);
+            if (collision) {
+                isCollision = true;
+                collisionEvent.gameOver = true;
+                break;
+            }
         }
 
         if (isCollision) {

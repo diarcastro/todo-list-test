@@ -6,6 +6,7 @@ import { Score } from './score';
 import GameArea from './game-area';
 
 const KEYBOARD_EVENT = 'keyup';
+const GAME_OVER_CLASS = 'gameOver';
 
 export default class Game implements IGame {
     width: number = 300;
@@ -31,6 +32,7 @@ export default class Game implements IGame {
     }
 
     start () {
+        document.body.classList.remove(GAME_OVER_CLASS);
         this.width = this.config.width || this.width;
         this.height = this.config.height || this.height;
         this.backgroundColor = this.config.backgroundColor || this.backgroundColor;
@@ -47,6 +49,7 @@ export default class Game implements IGame {
         this._score = new Score(this.getContext());
         this.area = new GameArea(this);
         this.area.draw();
+        this._food.generate();
         this._snake.init();
         this._addListeners();
         this._interval = setInterval(this.update.bind(this), this.intervalTime);
@@ -67,6 +70,10 @@ export default class Game implements IGame {
     }
 
     gameOver () {
+        document.body.classList.add(GAME_OVER_CLASS);
+        this._snake = null;
+        this._score = null;
+        this.area = null;
         clearInterval(this._interval);
     }
 
@@ -76,7 +83,9 @@ export default class Game implements IGame {
     }
 
     private onCollision (event: SnakeEvent) {
-        if (event.isBorderCollision) {
+        if (event.gameOver) {
+            this.gameOver();
+        } else if (event.isBorderCollision) {
             try {
                 const direction = this._snake.direction;
                 if (direction === EDirections.RIGHT || direction === EDirections.LEFT) {
@@ -89,6 +98,7 @@ export default class Game implements IGame {
                 this._food.eaten = true;
                 this.update();
             } catch(e) {
+                console.error(e);
                 this.gameOver();
             }
 

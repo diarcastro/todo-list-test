@@ -11,6 +11,7 @@ export class Score {
 
     constructor (game: CanvasRenderingContext2D) {
         this._gameContext = game;
+        this._value = 0;
         const lastScore = localStorage.getItem(LS_SCORE_KEY_NAME);
         this._lastScore = Number(lastScore);
     }

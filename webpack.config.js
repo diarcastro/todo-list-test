@@ -7,7 +7,7 @@ const htmlPluginOptions = {
 };
 
 module.exports = {
-    entry: './src/main.ts',
+    entry: ['./src/main.ts', './src/styles/styles.scss'],
     devtool: 'inline-source-map',
     mode: 'development',
     module: {
@@ -17,6 +17,26 @@ module.exports = {
                 use: 'ts-loader',
                 exclude: /node_modules/,
             },
+            {
+				test: /\.scss$/,
+				use: [
+					{
+						loader: 'file-loader',
+						options: {
+							name: 'styles/[name].css',
+						}
+					},
+					{
+						loader: 'extract-loader'
+					},
+					{
+						loader: 'css-loader?-url'
+					},
+					{
+						loader: 'sass-loader'
+					}
+				]
+			}
         ],
     },
     resolve: {
