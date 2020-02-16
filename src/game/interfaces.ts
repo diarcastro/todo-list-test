@@ -1,3 +1,5 @@
+import GameArea from "./game-area";
+
 export interface IConfig {
     width: number;
     height: number;
@@ -6,10 +8,12 @@ export interface IConfig {
     canvasElement: string;
     normalScore: number;
     specialScore: number;
+    gameAreaDecrease: number;
 }
 
 export interface IGame {
     config: IConfig;
+    area: GameArea;
     getContext(): CanvasRenderingContext2D;
 }
 

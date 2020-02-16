@@ -20,8 +20,8 @@ export default class Food extends Point{
     }
 
     randomPosition() {
-        this.x = Math.floor(Math.random() * (this._game.config.width - this.width));
-        this.y = Math.floor(Math.random() * (this._game.config.height - this.height));
+        this.x = Math.floor(Math.random() * (this._game.area.width - this.width));
+        this.y = Math.floor(Math.random() * (this._game.area.height - this.height));
     }
 
     checksRegenerate() {

@@ -3,6 +3,7 @@ import { IConfig, IGame, EDirections, ESnakeEvents } from './interfaces';
 import { Snake, SnakeEvent } from './snake';
 import debug from './debug';
 import { Score } from './score';
+import GameArea from './game-area';
 
 const KEYBOARD_EVENT = 'keyup';
 
@@ -13,6 +14,8 @@ export default class Game implements IGame {
     intervalTime: number = 20;
     canvas: HTMLCanvasElement;
     config: IConfig;
+    area: GameArea;
+
     private _game: CanvasRenderingContext2D;
     private _interval: NodeJS.Timeout;
     private _food: Food;
@@ -42,6 +45,8 @@ export default class Game implements IGame {
         }
         this._snake = new Snake(this);
         this._score = new Score(this.getContext());
+        this.area = new GameArea(this);
+        this.area.draw();
         this._snake.init();
         this._addListeners();
         this._interval = setInterval(this.update.bind(this), this.intervalTime);
@@ -54,10 +59,15 @@ export default class Game implements IGame {
 
     update () {
         this._clearGame();
+        this.area.draw();
         this._food.generate();
         this._snake.update();
         this._score.draw();
         this._snake.detectCollision(this._food);
+    }
+
+    gameOver () {
+        clearInterval(this._interval);
     }
 
     private _onKeyEvent (event: KeyboardEvent) {
@@ -65,22 +75,40 @@ export default class Game implements IGame {
         this._snake.changeDirection(key);
     }
 
-    private increaseScore (event: SnakeEvent) {
-        const score = event.special ? this.config.specialScore : this.config.normalScore;
-        this._food.eaten = true;
-        this._snake.addPiece();
-        this._score.increase(score);
-        if (event.special) {
+    private onCollision (event: SnakeEvent) {
+        if (event.isBorderCollision) {
+            try {
+                const direction = this._snake.direction;
+                if (direction === EDirections.RIGHT || direction === EDirections.LEFT) {
+                    this.area.width -= this.config.gameAreaDecrease;
+                } else {
+                    this.area.height -= this.config.gameAreaDecrease;
+                }
+
+                this._snake.reverse();
+                this._food.eaten = true;
+                this.update();
+            } catch(e) {
+                this.gameOver();
+            }
+
+
+        } else {
+            const score = event.special ? this.config.specialScore : this.config.normalScore;
+            this._food.eaten = true;
             this._snake.addPiece();
+            this._score.increase(score);
+            if (event.special) {
+                this._snake.addPiece();
+            }
+            this.update();
         }
-        this.update();
-        debug.warning('New Score', this._score);
     }
 
     private _addListeners () {
         document.removeEventListener(KEYBOARD_EVENT, this._onKeyEventBind);
         document.addEventListener(KEYBOARD_EVENT, this._onKeyEventBind);
-        this._snake.onCollision(this.increaseScore.bind(this))
+        this._snake.onCollision(this.onCollision.bind(this))
     }
 
     private _clearGame () {

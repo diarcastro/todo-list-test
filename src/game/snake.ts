@@ -7,6 +7,7 @@ const NUMBER_OF_PIECES_TO_START = 4;
 
 export class SnakeEvent extends Event {
     special: boolean = false;
+    isBorderCollision: boolean = false;
 
     constructor (type: string, special: boolean = false) {
         super(type);
@@ -34,6 +35,16 @@ export class Snake {
 
     get firstPiece(): SnakePiece | null {
         return this.pieces && this.pieces.length && this.pieces[0];
+    }
+
+    get direction(): EDirections {
+        return this._direction;
+    }
+
+    get width(): number {
+        const howManyPieces = this.pieces.length;
+        const size = howManyPieces * this.firstPiece.width;
+        return size;
     }
 
     addPiece (init: boolean = false) {
@@ -69,13 +80,49 @@ export class Snake {
         this.update();
     }
 
-    detectCollision (food: Point): boolean {
+    detectCollision (food: Point) {
         const collide = food.detectCollision(this.firstPiece);
         if (collide) {
             const collisionEvent = new SnakeEvent(ESnakeEvents.ON_COLLISION);
             this.triggerOnCollision(collisionEvent);
         }
-        return collide;
+        // Detect borders collisions
+        const collisionEvent = new SnakeEvent(ESnakeEvents.ON_COLLISION);
+        collisionEvent.isBorderCollision = true;
+        let isCollision = false;
+        if (this.firstPiece.x < 0){
+            isCollision = true;
+        } else if (this.firstPiece.y < 0) {
+            isCollision = true;
+        } else if (this.firstPiece.x + this.firstPiece.width > this._game.area.width) {
+            isCollision = true;
+        } else if (this.firstPiece.y + this.firstPiece.height > this._game.area.height) {
+            isCollision = true;
+        }
+
+        if (isCollision) {
+            this.triggerOnCollision(collisionEvent);
+        }
+    }
+
+    reverse () {
+        this.pieces = this.pieces.reverse();
+        switch (this._direction) {
+            case EDirections.RIGHT:
+                this._direction = EDirections.LEFT;
+                this._moveAfterCollision();
+                break;
+            case EDirections.LEFT:
+                this._direction = EDirections.RIGHT;
+                break;
+            case EDirections.TOP:
+                this._direction = EDirections.BOTTOM;
+                break;
+            case EDirections.BOTTOM:
+                this._direction = EDirections.TOP;
+                this._moveAfterCollision();
+                break;
+        }
     }
 
     onCollision (callback: Function) {
@@ -147,6 +194,17 @@ export class Snake {
                     piece.x+= piece.width;
                     return piece;
             }
+        });
+    }
+
+    private _moveAfterCollision () {
+        this.pieces = this.pieces.map((piece) => {
+            if (this._direction === EDirections.LEFT) {
+                piece.x-= this._game.config.gameAreaDecrease + this.firstPiece.width;
+            } else if (this._direction === EDirections.TOP) {
+                piece.y-= this._game.config.gameAreaDecrease + this.firstPiece.height;
+            }
+            return piece;
         });
     }
 }
