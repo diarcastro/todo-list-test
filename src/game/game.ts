@@ -2,6 +2,7 @@ import Food from './food';
 import { IConfig, IGame, EDirections, ESnakeEvents } from './interfaces';
 import { Snake, SnakeEvent } from './snake';
 import debug from './debug';
+import { Score } from './score';
 
 const KEYBOARD_EVENT = 'keyup';
 
@@ -17,7 +18,7 @@ export default class Game implements IGame {
     private _food: Food;
     private _snake: Snake;
     private _onKeyEventBind: any;
-    private _score: number = 0;
+    private _score: Score;
 
     constructor (gameConfig: IConfig) {
         this.config = gameConfig;
@@ -40,6 +41,7 @@ export default class Game implements IGame {
             clearInterval(this._interval);
         }
         this._snake = new Snake(this);
+        this._score = new Score(this.getContext());
         this._snake.init();
         this._addListeners();
         this._interval = setInterval(this.update.bind(this), this.intervalTime);
@@ -52,8 +54,9 @@ export default class Game implements IGame {
 
     update () {
         this._clearGame();
-        this._snake.update();
         this._food.generate();
+        this._snake.update();
+        this._score.draw();
         this._snake.detectCollision(this._food);
     }
 
@@ -63,9 +66,10 @@ export default class Game implements IGame {
     }
 
     private increaseScore (event: SnakeEvent) {
-        this._score+= event.special ? this.config.specialScore : this.config.normalScore;
+        const score = event.special ? this.config.specialScore : this.config.normalScore;
         this._food.eaten = true;
         this._snake.addPiece();
+        this._score.increase(score);
         if (event.special) {
             this._snake.addPiece();
         }
