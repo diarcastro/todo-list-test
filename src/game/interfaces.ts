@@ -8,5 +8,12 @@ export interface IConfig {
 
 export interface IGame {
     config: IConfig;
-    getContext: Function;
+    getContext(): CanvasRenderingContext2D;
+}
+
+export const enum EDirections {
+    RIGHT   = 'ArrowRight',
+    LEFT    = 'ArrowLeft',
+    BOTTOM  = 'ArrowDown',
+    TOP     = 'ArrowUp',
 }

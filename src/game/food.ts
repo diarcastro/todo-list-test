@@ -1,7 +1,10 @@
 import { IGame } from './interfaces'
 
+const SECOND = 1000;
+
 export default class Food {
-    backgroundColor: string = '#FF0000';
+    backgroundColor: string = '#FF7F66';
+    strokeColor: string = '#3F464C';
     width: number = 16;
     height: number = 16;
     minTime: number = 4;
@@ -23,7 +26,7 @@ export default class Food {
     }
 
     checksRegenerate() {
-        const timeout = this.lastTimeOut * 1000;
+        const timeout = this.lastTimeOut * SECOND;
         if (this.timeElapsed * this._game.config.intervalTime >= timeout) {
             this.lastTimeOut = Math.round((Math.random() * this.maxTime)) + this.minTime;
             this.lastPosition = this.randomPosition();
@@ -38,6 +41,8 @@ export default class Food {
         game.beginPath();
         game.rect(this.lastPosition.x, this.lastPosition.y, this.width, this.height);
         game.fillStyle = this.backgroundColor;
+        game.strokeStyle = this.strokeColor;
+        game.stroke();
         game.fill();
 
     }
