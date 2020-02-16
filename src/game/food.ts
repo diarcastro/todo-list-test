@@ -10,6 +10,7 @@ export default class Food extends Point{
     maxTime: number = 6;
     timeElapsed: number = 0;
     lastTimeOut: number = 0;
+    eaten: boolean = false;
 
     private _game: IGame;
 
@@ -25,10 +26,11 @@ export default class Food extends Point{
 
     checksRegenerate() {
         const timeout = this.lastTimeOut * SECOND;
-        if (this.timeElapsed * this._game.config.intervalTime >= timeout) {
+        if (this.eaten || this.timeElapsed * this._game.config.intervalTime >= timeout) {
             this.lastTimeOut = Math.round((Math.random() * this.maxTime)) + this.minTime;
             this.randomPosition();
             this.timeElapsed = 0;
+            this.eaten = false;
         }
     }
 

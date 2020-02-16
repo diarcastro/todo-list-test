@@ -7,4 +7,6 @@ export class Config implements IConfig {
     backgroundColor: string = '#EEE';
     intervalTime: number = 300;
     canvasElement: string = 'game';
+    normalScore: number = 1;
+    specialScore: number = 9;
 }

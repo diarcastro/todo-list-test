@@ -1,6 +1,7 @@
 import Food from './food';
-import { IConfig, IGame, EDirections } from './interfaces';
-import Snake from './snake';
+import { IConfig, IGame, EDirections, ESnakeEvents } from './interfaces';
+import { Snake, SnakeEvent } from './snake';
+import debug from './debug';
 
 const KEYBOARD_EVENT = 'keyup';
 
@@ -16,6 +17,7 @@ export default class Game implements IGame {
     private _food: Food;
     private _snake: Snake;
     private _onKeyEventBind: any;
+    private _score: number = 0;
 
     constructor (gameConfig: IConfig) {
         this.config = gameConfig;
@@ -52,17 +54,29 @@ export default class Game implements IGame {
         this._clearGame();
         this._snake.update();
         this._food.generate();
+        this._snake.detectCollision(this._food);
     }
 
     private _onKeyEvent (event: KeyboardEvent) {
-        console.log('KeyboardEvent:', event, this);
         const key = event.key as EDirections;
         this._snake.changeDirection(key);
+    }
+
+    private increaseScore (event: SnakeEvent) {
+        this._score+= event.special ? this.config.specialScore : this.config.normalScore;
+        this._food.eaten = true;
+        this._snake.addPiece();
+        if (event.special) {
+            this._snake.addPiece();
+        }
+        this.update();
+        debug.warning('New Score', this._score);
     }
 
     private _addListeners () {
         document.removeEventListener(KEYBOARD_EVENT, this._onKeyEventBind);
         document.addEventListener(KEYBOARD_EVENT, this._onKeyEventBind);
+        this._snake.onCollision(this.increaseScore.bind(this))
     }
 
     private _clearGame () {

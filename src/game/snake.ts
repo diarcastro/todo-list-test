@@ -1,16 +1,27 @@
 import SnakePiece from './snake-piece';
-import { IGame, EDirections } from './interfaces';
+import { IGame, EDirections, ESnakeEvents } from './interfaces';
 import debug from './debug';
+import { Point } from './point';
 
 const NUMBER_OF_PIECES_TO_START = 4;
 
-export default class Snake {
+export class SnakeEvent extends Event {
+    special: boolean = false;
+
+    constructor (type: string, special: boolean = false) {
+        super(type);
+        this.special = special;
+    }
+}
+
+export class Snake {
 
     pieces: SnakePiece[];
 
     private _gameContext: CanvasRenderingContext2D;
     private _game: IGame;
     private _direction:EDirections = EDirections.RIGHT;
+    private _events: Function[];
 
     constructor (game: IGame) {
         this._game = game;
@@ -19,6 +30,10 @@ export default class Snake {
 
     get lastPiece(): SnakePiece | null {
         return this.pieces && this.pieces.length && this.pieces[this.pieces.length - 1];
+    }
+
+    get firstPiece(): SnakePiece | null {
+        return this.pieces && this.pieces.length && this.pieces[0];
     }
 
     addPiece (init: boolean = false) {
@@ -47,10 +62,30 @@ export default class Snake {
 
     init () {
         this.pieces = [];
+        this._events = [];
         for (let i = 0; i< NUMBER_OF_PIECES_TO_START; i++) {
             this.addPiece(true);
         }
         this.update();
+    }
+
+    detectCollision (food: Point): boolean {
+        const collide = food.detectCollision(this.firstPiece);
+        if (collide) {
+            const collisionEvent = new SnakeEvent(ESnakeEvents.ON_COLLISION);
+            this.triggerOnCollision(collisionEvent);
+        }
+        return collide;
+    }
+
+    onCollision (callback: Function) {
+        this._events.push(callback);
+    }
+
+    private triggerOnCollision (event: SnakeEvent) {
+        for (let fnc of this._events) {
+            fnc(event);
+        }
     }
 
     changeDirection (newDirection: EDirections) {
@@ -58,8 +93,6 @@ export default class Snake {
         if (direction === newDirection) {
             return;
         }
-
-        debug.log('Current Direction', direction, 'New Snake Direction', newDirection);
 
         switch (newDirection) {
             case EDirections.RIGHT:

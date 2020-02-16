@@ -4,6 +4,8 @@ export interface IConfig {
     backgroundColor: string;
     intervalTime: number;
     canvasElement: string;
+    normalScore: number;
+    specialScore: number;
 }
 
 export interface IGame {
@@ -16,4 +18,8 @@ export const enum EDirections {
     LEFT    = 'ArrowLeft',
     BOTTOM  = 'ArrowDown',
     TOP     = 'ArrowUp',
+}
+
+export const enum ESnakeEvents {
+    ON_COLLISION = 'onCollision',
 }
