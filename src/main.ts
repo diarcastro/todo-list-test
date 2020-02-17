@@ -1,10 +1,6 @@
-import { Config } from './game/config';
-import Game from './game/game';
+import List from './todo/list';
 
-const gameConfig = new Config();
+const formContainer = document.querySelector('.todoList__Form') as HTMLElement;
+const listContainer = document.querySelector('.todoList__list') as HTMLElement;
 
-const game = new Game(gameConfig);
-game.start();
-
-const button = document.getElementById('playAgain');
-button && button.addEventListener('click', () => game.start());
+const list = new List(listContainer, formContainer);

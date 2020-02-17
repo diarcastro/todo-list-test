@@ -8,7 +8,7 @@ const htmlPluginOptions = {
 
 module.exports = {
     entry: ['./src/main.ts', './src/styles/styles.scss'],
-    devtool: 'inline-source-map',
+    // devtool: 'inline-source-map',
     mode: 'development',
     module: {
         rules: [

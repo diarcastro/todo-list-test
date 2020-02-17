@@ -3,15 +3,52 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>Snake</title>
-        <meta name="description" content="">
+        <title>Todo List</title>
+        <meta name="description" content="Todo list test">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
         <link rel="stylesheet" href="styles/styles.css">
     </head>
     <body>
-        <div class="game">
-            <canvas id="game" class="game__canvas"></canvas>
-            <button id="playAgain" class="game__button">Play Again!</button>
-        </div>
+        <section class="todoList">
+            <section class="todoList__Form columns">
+                <div class="column is-half is-offset-one-quarter">
+                    <h1>TODO List</h1>
+                    <div class="columns">
+                        <div class="todoList__Form-title column field">
+                            <div class="control">
+                                <input type="text" placeholder="title" class="todoList__inputText--title input" required />
+                            </div>
+                        </div>
+                        <div class="todoList__Form-priority column field">
+                            <div class="control">
+                                <div class="select is-fullwidth">
+                                    <select name="priority" id="priority" class="todoList__select">
+                                        <option value="">Priority</option>
+                                        <option value="Low">Low</option>
+                                        <option value="Medium">Medium</option>
+                                        <option value="High">High</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="todoList__Form-deadline column field">
+                            <div class="control">
+                                <input type="date" placeholder="Select a deadline date" class="todoList__inputText--deadline input" />
+                            </div>
+                        </div>
+                        <div class="todoList__Form-submit column field">
+                            <div class="control">
+                                <button class="todoList__inputButton saveBtn button is-link">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <div class="columns">
+                <section class="todoList__list column is-half is-offset-one-quarter"></section>
+            </div>
+        </section>
     </body>
 </html>

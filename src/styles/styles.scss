@@ -1,45 +1,8 @@
-/* Color Theme Swatches in Hex */
-$Salmon-on-Ice-1-hex: #3F464C;
-$Salmon-on-Ice-2-hex: #2186C4;
-$Salmon-on-Ice-3-hex: #7ECEFC;
-$Salmon-on-Ice-4-hex: #FFF6E5;
-$Salmon-on-Ice-5-hex: #FF7F66;
+h1 {
+    font-weight: bold;
+    margin: 1rem 0 2rem;
+}
 
-.game {
-    position: relative;
-    width: 800px;
-    height: 800px;
-
-    &__button {
-        padding: 20px 30px;
-        font-size: 22px;
-        font-weight: bold;
-        display: none;
-        background-color: $Salmon-on-Ice-2-hex;
-        color: $Salmon-on-Ice-4-hex;
-        border: 0 none;
-        border-radius: 3px;
-        outline: none;
-        transition: .3s all;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate3d(-90px, -33px, 0);
-        cursor: pointer;
-
-        &:hover {
-            background-color: $Salmon-on-Ice-3-hex;
-            box-shadow: #3F464C 0px 0px 13px -2px;
-            color: $Salmon-on-Ice-1-hex
-        }
-
-        &:active {
-            background-color: darken($Salmon-on-Ice-2-hex, 10);
-            color: inherit;
-        }
-
-        body.gameOver & {
-            display: inline-block;
-        }
-    }
+.delete-icon {
+    color: #F00;
 }
