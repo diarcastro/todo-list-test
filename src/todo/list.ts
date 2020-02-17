@@ -17,6 +17,9 @@ export default class List {
     private _deadlineElement: HTMLInputElement;
     private _editingItem: Item;
 
+    private _editItemBind: any;
+    private _deleteItemBind: any;
+
     constructor(element: HTMLElement, form: HTMLElement) {
         this.element = element;
         this.form = form;
@@ -25,6 +28,9 @@ export default class List {
         this._priorityElement = this.form.querySelector(PRIORITY_SELCTOR) as HTMLSelectElement;
         this._deadlineElement = this.form.querySelector(DEADLINE_SELCTOR) as HTMLInputElement;
 
+        this._editItemBind = this.editItem.bind(this);
+        this._deleteItemBind = this.deleteItem.bind(this);
+
 
         this.saveButton.addEventListener('click', this._parseForm.bind(this));
         this._getTaksFromLS();
@@ -32,7 +38,8 @@ export default class List {
     }
 
     addItem(item: Item) {
-        if (this._editingItem.id !== item.id) {
+        const editingId = this._editingItem && this._editingItem.id;
+        if (editingId !== item.id) {
             this.items = [item, ...this.items];
             this._drawDom(item);
         }else {
@@ -90,13 +97,12 @@ export default class List {
             template+= item.getTemplate();
             const currentMarkup = this.element.innerHTML;
             this.element.innerHTML = template + currentMarkup;
-            return;
         } else {
             for (let item of this.items){
                 template+= item.getTemplate();
             }
+            this.element.innerHTML = template;
         }
-        this.element.innerHTML = template;
         this._addEvents();
     }
 
@@ -120,12 +126,14 @@ export default class List {
 
         if(editButtons && editButtons.length) {
             for(let button of editButtons) {
-                button.addEventListener('click', this.editItem.bind(this));
+                button.removeEventListener('click', this._editItemBind);
+                button.addEventListener('click', this._editItemBind);
             }
         }
         if(deleteButtons && deleteButtons.length) {
             for(let button of deleteButtons) {
-                button.addEventListener('click', this.deleteItem.bind(this));
+                button.removeEventListener('click', this._deleteItemBind);
+                button.addEventListener('click', this._deleteItemBind);
             }
         }
     }
